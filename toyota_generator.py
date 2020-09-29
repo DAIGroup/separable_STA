@@ -8,9 +8,11 @@ sys.path.insert(0, '%s/ntu-i3d' % cfg.code_path)
 sys.path.insert(0, '%s/LSTM_action_recognition' % cfg.code_path)
 
 import Smarthome_Loader as i3d_shl
+import Smarthome_Loader_CV as i3d_shl_CV
 import readers.smarthome_skeleton_fromjson_sampling as skel
 import config as lstm_cfg
 import i3d_config as i3d_cfg
+import sta_config as sta_cfg
 from keras.utils import Sequence, to_categorical
 from random import sample, randint, shuffle
 import numpy as np
@@ -19,16 +21,15 @@ import os.path
 _skel_dims = 39
 _step = 30
 
-
 class ToyotaGeneratorTrain(Sequence):
     def __init__(self, split_path, version, batch_size = 4):
         self.batch_size = batch_size
         self.version = version
         self.crops_path = i3d_cfg.crops_dir
-        self.skeletons_path = lstm_cfg.dataset_dir + '/json_rot/'
+        self.skeletons_path = lstm_cfg.dataset_dir + '/%s/' % lstm_cfg.variant_dir
         self.files = [i.strip() for i in open(split_path).readlines()]
         self.stack_size = 64
-        self.num_classes = 35
+        self.num_classes = sta_cfg.classes
         self.stride = 2
 
     def __len__(self):
@@ -44,7 +45,13 @@ class ToyotaGeneratorTrain(Sequence):
         x_train /= 127.5
         crops_x_train = x_train - 1
 
-        y_train = np.array([i3d_shl.name_to_int(i.split('_')[0]) for i in batch]) - 1
+        if cfg.experiment == 'crosssubject':
+            y_train = np.array([i3d_shl.name_to_int(i.split('_')[0]) for i in batch]) - 1
+        elif cfg.experiment == 'crossview':
+            y_train = np.array([i3d_shl_CV.name_to_int(i.split('_')[0]) for i in batch]) - 1
+        else:
+            print('Error: No "experiment" defined in config file.')
+            sys.exit(-1)
         # assert y_train == skel_y_train
 
         y_train = to_categorical(y_train, num_classes=self.num_classes)

@@ -8,3 +8,9 @@ tf.device('/gpu:0')
 # code_path = '/home/paal/deploy'
 code_path = '/home/pau/harnets'
 gpus = 1
+
+experiment = 'crossview'
+if experiment == 'crossview':
+    classes = 19
+elif experiment == 'crosssubject':
+    classes = 35

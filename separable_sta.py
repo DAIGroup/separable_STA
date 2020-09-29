@@ -18,24 +18,28 @@ from keras.optimizers import Adam
 from keras.utils import multi_gpu_model
 import keras.backend as K
 
-path_to_lstm = '%s/LSTM_action_recognition/lstm.hdf5' % cfg.code_path
+path_to_lstm = '%s/LSTM_action_recognition/results/lstm.hdf5' % cfg.code_path
 full_lstm = load_model(path_to_lstm)
 full_lstm.summary()
 lstm = Model(inputs=full_lstm.input, outputs=full_lstm.get_layer(index=2).output)
 lstm.trainable = False
 
-path_to_i3d = '%s/ntu-i3d/i3d.hdf5' % cfg.code_path
+path_to_i3d = '%s/ntu-i3d/results/i3d.hdf5' % cfg.code_path
 full_i3d = load_model(path_to_i3d)
 full_i3d.summary()
 # check size of mixed_5c (index=-6), which should be (b) x t x m x n x c (None, 8, 7, 7, feats)
 i3d = Model(inputs=full_i3d.input, outputs=full_i3d.get_layer(index=-6).output)
 i3d.trainable = False
 _, t, m, n, c = i3d.output.get_shape().as_list()
-_classes = 35
+if cfg.experiment == 'crosssubject' or cfg.experiment == 'crossview':
+    _classes = cfg.classes
+else:
+    print('ERROR: Missing "experiment" parameter in config file ("crossview"/"crosssubject").')
+    sys.exit(-1)
 _dropout_prob = 0.5
-_ver = 'sep_sta'
+_ver = 'sep_sta_CV_rot_wc_nt'
 _batch_size = 4
-_model_name = 'sep_sta'
+_model_name = 'sep_sta_CV_rot_wc_nt'
 _epochs = 100
 
 
