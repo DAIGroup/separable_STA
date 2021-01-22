@@ -9,6 +9,9 @@ tf.device('/gpu:0')
 code_path = '/home/pau/harnets'
 gpus = 1
 
+experiment_name = 'sep_sta_rot_cw_2'
+use_sample_weights = False
+
 experiment = 'crossview'
 if experiment == 'crossview':
     classes = 19

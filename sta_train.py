@@ -2,7 +2,7 @@
     Implementation of the Separable STA from the "Toyota SmartHome" ICCV 2019 paper.
 """
 import sta_config as cfg
-from toyota_generator import ToyotaGeneratorTrain
+from toyota_generator import ToyotaGenerator
 import sys
 sys.path.insert(0, '%s/ntu-i3d' % cfg.code_path)
 sys.path.insert(0, '%s/LSTM_action_recognition' % cfg.code_path)
@@ -13,28 +13,27 @@ from keras.callbacks import CSVLogger, Callback
 from keras.optimizers import Adam
 from keras.utils import multi_gpu_model
 
-_dropout_prob = 0.5
-_ver = 'sep_sta_rot_cw'
+_ver = cfg.experiment_name
 _batch_size = 4
-_model_name = 'sep_sta_rot_cw'
+_model_name = _ver
 _epochs = 50
 
 
 lambda1 = 0.00001
 lambda2 = 0.00001
 # lr = 0.001
-lr = 0.0001
+lr = 0.00001
 adam = Adam(lr=lr)
 
 if cfg.experiment == 'crosssubject':
-    train_generator = ToyotaGeneratorTrain('%s/splits_i3d/train_CS.txt' % i3d_cfg.dataset_dir,
+    train_generator = ToyotaGenerator('%s/splits_i3d/train_CS.txt' % i3d_cfg.dataset_dir,
                                            _ver, batch_size=_batch_size)
-    val_generator = ToyotaGeneratorTrain('%s/splits_i3d/validation_CS.txt' % i3d_cfg.dataset_dir,
+    val_generator = ToyotaGenerator('%s/splits_i3d/validation_CS.txt' % i3d_cfg.dataset_dir,
                                          _ver, batch_size=_batch_size)
 elif cfg.experiment == 'crossview':
-    train_generator = ToyotaGeneratorTrain('%s/splits_i3d/train_CV.txt' % i3d_cfg.dataset_dir,
+    train_generator = ToyotaGenerator('%s/splits_i3d/train_CV.txt' % i3d_cfg.dataset_dir,
                                            _ver, batch_size=_batch_size)
-    val_generator = ToyotaGeneratorTrain('%s/splits_i3d/validation_CV.txt' % i3d_cfg.dataset_dir,
+    val_generator = ToyotaGenerator('%s/splits_i3d/validation_CV.txt' % i3d_cfg.dataset_dir,
                                          _ver, batch_size=_batch_size)
 
 if cfg.gpus > 1:
