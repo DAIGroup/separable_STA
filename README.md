@@ -2,7 +2,8 @@
 This is an **implementation** of the **separable spatio-temporal attention** (STA) network described in
 (Das et al. 2019).
 
-This network consists of a spatio-temporal attention block that modulates the convolutional _feature_ output _g_ of an I3D
+This network consists of a spatio-temporal attention block trained using an 3-layer LSTM network that learnt from
+skeletal information. This attention block modulates the convolutional _feature_ output _g_ of an I3D
 network (see [`DAIGroup/i3d`](github.com/DAIGroup/i3d) repository), both spatially and temporally. This modulated
 features _gt_ and _gs_ are then concatenated and feed to a classifier for the final one-hot output vector. Please see
 the original paper (Das et al. 2019) for further details. The two required branches are provided in separate 
